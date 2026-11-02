@@ -1,7 +1,7 @@
 import unittest
 
 from swarm_coordination import (
-    AgentCandidate, CoordinationError, Coordinator, TaskRequest, TaskState,
+    AgentCandidate, CoordinationError, Coordinator, TaskRequest, TaskState, ValidationError,
 )
 
 
@@ -35,6 +35,33 @@ def make_coordinator(adapter=None, candidates=None, **kwargs):
 
 
 class CoordinatorTests(unittest.TestCase):
+
+    def test_nonfinite_or_boolean_lifecycle_timestamp_is_rejected(self):
+        coordinator = make_coordinator()
+        with self.assertRaises(ValidationError):
+            coordinator.submit(request(), now=float("nan"))
+        with self.assertRaises(ValidationError):
+            coordinator.submit(request(), now=True)
+
+    def test_candidate_discovery_is_bounded(self):
+        coordinator = Coordinator(
+            candidate_resolver=lambda capability: (candidate for candidate in [A, B]),
+            dispatch_adapter=FakeDispatch(),
+            policy_check=lambda principal, task: True,
+            max_candidates=1,
+        )
+        with self.assertRaises(CoordinationError):
+            coordinator.submit(request(), now=100)
+
+    def test_invalid_candidate_limit_is_rejected(self):
+        with self.assertRaises(ValueError):
+            Coordinator(
+                candidate_resolver=lambda capability: [A],
+                dispatch_adapter=FakeDispatch(),
+                policy_check=lambda principal, task: True,
+                max_candidates=0,
+            )
+
     def test_two_agent_delegation_acknowledgement_and_completion(self):
         adapter = FakeDispatch()
         coordinator = make_coordinator(adapter)

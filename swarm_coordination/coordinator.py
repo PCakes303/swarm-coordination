@@ -198,7 +198,7 @@ class Coordinator:
         return record
 
     def acknowledge(self, task_id: str, dispatch_ref: str, agent_id: str, *, now: float | None = None) -> TaskSnapshot:
-        timestamp = time.time() if now is None else float(now)
+        timestamp = self._timestamp(now)
         with self._lock:
             record = self._active(task_id, dispatch_ref, agent_id, TaskState.ASSIGNED)
             if record.lease_expires_at is not None and timestamp >= record.lease_expires_at:
@@ -209,7 +209,7 @@ class Coordinator:
             return record.snapshot()
 
     def start(self, task_id: str, dispatch_ref: str, agent_id: str, *, now: float | None = None) -> TaskSnapshot:
-        timestamp = time.time() if now is None else float(now)
+        timestamp = self._timestamp(now)
         with self._lock:
             record = self._active(task_id, dispatch_ref, agent_id, TaskState.ACKNOWLEDGED)
             if record.lease_expires_at is not None and timestamp >= record.lease_expires_at:
@@ -228,7 +228,7 @@ class Coordinator:
         success: bool = True,
         now: float | None = None,
     ) -> TaskSnapshot:
-        timestamp = time.time() if now is None else float(now)
+        timestamp = self._timestamp(now)
         if result_ref is not None and (not isinstance(result_ref, str) or len(result_ref) > 512):
             raise ValidationError("result_ref must be a string of at most 512 characters")
         if not isinstance(success, bool):
@@ -251,7 +251,7 @@ class Coordinator:
             return record.snapshot()
 
     def recover(self, *, now: float | None = None) -> list[TaskSnapshot]:
-        timestamp = time.time() if now is None else float(now)
+        timestamp = self._timestamp(now)
         recovered = []
         with self._lock:
             for record in self._tasks.values():

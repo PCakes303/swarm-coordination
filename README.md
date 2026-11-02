@@ -8,12 +8,12 @@ This scaffold coordinates a task through injected candidate-discovery and dispat
 
 - Validates bounded task declarations and attempt budgets.
 - Requires an explicit policy callback returning exactly `True`.
-- Resolves candidates, filters the exact capability, removes duplicate agent IDs and sorts deterministically.
+- Resolves at most 256 candidates by default, filters the exact capability, removes duplicate agent IDs and sorts deterministically.
 - Supports idempotent submission; conflicting reuse of an idempotency key is rejected.
 - Binds acknowledgement, start and completion to the active dispatch reference and selected agent.
 - Retries failed dispatches, reported failures and expired leases within a fixed attempt budget.
 - Emits optional lifecycle audit events and fails closed when configured audit delivery fails.
-- Limits the number of retained tasks.
+- Limits the number of retained tasks and rejects non-finite/boolean lifecycle timestamps.
 
 ## Quick start
 

@@ -19,6 +19,17 @@ PolicyCheck = Callable[[str, TaskRequest], bool]
 AuditSink = Callable[[dict], None]
 
 
+def _finite_float(value: object) -> float | None:
+    """Convert numeric timestamps safely, rejecting booleans, overflow and non-finite values."""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return None
+    try:
+        converted = float(value)
+    except (OverflowError, ValueError):
+        return None
+    return converted if math.isfinite(converted) else None
+
+
 @dataclass
 class _TaskRecord:
     request: TaskRequest
@@ -97,9 +108,10 @@ class Coordinator:
     @staticmethod
     def _timestamp(now: float | None) -> float:
         value = time.time() if now is None else now
-        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+        converted = _finite_float(value)
+        if converted is None:
             raise ValidationError("timestamp must be a finite number")
-        return float(value)
+        return converted
 
     def _candidates(self, capability_id: str) -> tuple[AgentCandidate, ...]:
         try:

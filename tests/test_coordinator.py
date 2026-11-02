@@ -176,6 +176,11 @@ class CoordinatorTests(unittest.TestCase):
         with self.assertRaises(CoordinationError):
             coordinator.submit(request(task="task.two", key="idem.two"), now=101)
 
+    def test_overflowing_integer_lifecycle_timestamp_is_rejected(self):
+        coordinator = make_coordinator()
+        with self.assertRaises(ValidationError):
+            coordinator.submit(request(), now=10**10000)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -1,0 +1,33 @@
+{
+  "compatibility_version": "1.1.0",
+  "repository": "swarm-coordination",
+  "policy": "Dependencies express declared contract relationships only. Runtime interoperability is not established until cross-repository adapters and reproducible conformance evidence are published.",
+  "dependencies": [
+    {
+      "repository_id": "swarm-runtime",
+      "version_range": "contract version not yet pinned",
+      "status": "declared",
+      "evidence": []
+    },
+    {
+      "repository_id": "aix-core",
+      "version_range": "experimental task envelope version not yet pinned",
+      "status": "declared",
+      "evidence": []
+    },
+    {
+      "repository_id": "discovery-network",
+      "version_range": "candidate discovery contract not yet pinned",
+      "status": "declared",
+      "evidence": []
+    },
+    {
+      "repository_id": "capability-registry",
+      "version_range": "capability matching contract not yet pinned",
+      "status": "declared",
+      "evidence": []
+    }
+  ],
+  "tested_combinations": [],
+  "breaking_change_policy": "Major versions may remove or change required fields or lifecycle semantics; minor versions add backward-compatible optional fields; patch versions correct editorial or non-semantic defects."
+}

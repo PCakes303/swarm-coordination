@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "manifest_version": "1.0.0",
+  "id": "swarm-coordination",
+  "name": "swarm-coordination",
+  "visibility": "public",
+  "maturity": "scaffolding",
+  "summary": "Experimental single-process task coordinator for deterministic agent assignment, acknowledgement, idempotency, bounded retries and lease recovery.",
+  "license": {
+    "expression": null,
+    "status": "pending-review",
+    "notes": "Repository-specific license decision remains pending review."
+  },
+  "interfaces": [
+    {
+      "name": "swarm-task-request-v1",
+      "version": "0.1.0",
+      "kind": "schema",
+      "stability": "experimental"
+    },
+    {
+      "name": "swarm-coordination-api-v1",
+      "version": "0.1.0",
+      "kind": "library",
+      "stability": "experimental"
+    },
+    {
+      "name": "swarm-dispatch-adapter-v1",
+      "version": "0.1.0",
+      "kind": "library",
+      "stability": "experimental"
+    }
+  ],
+  "dependencies": [
+    {
+      "id": "swarm-runtime",
+      "constraint": "worker lifecycle and execution contract; version TBD",
+      "kind": "contract"
+    },
+    {
+      "id": "aix-core",
+      "constraint": "task.request, task lifecycle and semantic envelope mapping; version TBD",
+      "kind": "contract"
+    },
+    {
+      "id": "discovery-network",
+      "constraint": "candidate agent endpoint discovery contract; version TBD",
+      "kind": "contract"
+    },
+    {
+      "id": "capability-registry",
+      "constraint": "capability requirement and candidate matching contract; version TBD",
+      "kind": "contract"
+    }
+  ],
+  "security": {
+    "threat_model": "docs/THREAT-MODEL.md",
+    "secrets_in_repository": false,
+    "data_classification": "public",
+    "security_contact": null
+  },
+  "default_branch": "main",
+  "compatibility": [],
+  "evidence": [
+    {
+      "claim": "Two-agent delegation, idempotency conflict, acknowledgement binding, bounded retries and lease recovery are tested.",
+      "kind": "test",
+      "location": "tests/test_coordinator.py"
+    }
+  ],
+  "$id": "https://github.com/PCakes303/swarm-coordination/blob/main/manifest.json"
+}

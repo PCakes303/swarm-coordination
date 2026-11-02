@@ -6,7 +6,7 @@ The coordinator handles task identifiers, requester identifiers, capability requ
 
 ## Controls in this scaffold
 
-- Strict bounded task fields and attempt count.
+- Strict bounded task fields, attempt count, candidate enumeration (256 by default) and finite lifecycle timestamps.
 - Fail-closed policy callback.
 - Bounded in-memory task count and retry attempts.
 - Deterministic candidate ordering and duplicate-agent filtering.

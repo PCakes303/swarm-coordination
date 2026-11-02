@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/PCakes303/swarm-coordination/blob/main/schemas/task-request.schema.json",
+  "title": "Swarm Coordination Task Request",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["task_id", "idempotency_key", "requester_id", "capability_id", "workload_ref", "max_attempts"],
+  "properties": {
+    "task_id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "idempotency_key": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "requester_id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "capability_id": {"type": "string", "minLength": 1, "maxLength": 128, "pattern": "^[A-Za-z0-9][A-Za-z0-9._:-]*$"},
+    "workload_ref": {"type": "string", "minLength": 1, "maxLength": 512},
+    "max_attempts": {"type": "integer", "minimum": 1, "maximum": 5}
+  }
+}

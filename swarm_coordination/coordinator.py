@@ -173,6 +173,13 @@ class Coordinator:
             record.state = TaskState.QUEUED
             try:
                 self._emit("task.dispatching", record, agent_id=candidate.agent_id, dispatch_ref=dispatch_ref)
+            except Exception as exc:
+                record.last_error = f"audit failed before dispatch: {type(exc).__name__}"
+                record.history.append(record.last_error)
+                record.state = TaskState.FAILED
+                record.lease_expires_at = None
+                raise CoordinationError("audit delivery failed; dispatch was not attempted") from exc
+            try:
                 self.dispatch_adapter.dispatch(record.request, candidate, dispatch_ref)
             except Exception as exc:
                 record.last_error = f"dispatch failed: {type(exc).__name__}"

@@ -1,0 +1,9 @@
+# Swarm Coordination
+
+Experimental task assignment, delegation, acknowledgement, bounded retry and lease-recovery coordinator for the hybrid agent swarm.
+
+- README.md: scope and quick start.
+- docs/COORDINATION-CONTRACT.md: task lifecycle, idempotency, dispatch and recovery contract.
+- docs/THREAT-MODEL.md: trust boundaries and non-goals.
+- Python API: swarm_coordination.
+- This is a single-process in-memory coordinator, not a distributed consensus or durable orchestration service.

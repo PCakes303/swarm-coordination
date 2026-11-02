@@ -8,10 +8,15 @@
       "id": "swarm.task-delegation",
       "name": "Agent task delegation",
       "status": "scaffolded",
-      "description": "Assigns validated task requests to policy-approved candidates through an injected dispatch adapter.",
+      "description": "Assigns validated task requests to policy-approved candidates through an injected dispatch adapter, with bounded candidate enumeration and deterministic selection.",
       "evidence": [
         "swarm_coordination/coordinator.py",
         "tests/test_coordinator.py"
+      ],
+      "limitations": [
+        "Candidate resolver and dispatch adapter are integration seams; no authenticated network delivery or remote identity verification is implemented.",
+        "Candidate limit defaults to 256; excess candidate enumeration rejects the task.",
+        "Requester identity and candidate capability claims are not independently authenticated or attested."
       ]
     },
     {

@@ -1,5 +1,6 @@
 """Bounded, deterministic task coordinator with explicit adapter seams."""
 from dataclasses import dataclass, field
+import math
 import threading
 import time
 from typing import Callable, Iterable, Protocol
@@ -57,6 +58,7 @@ class Coordinator:
         policy_check: PolicyCheck | None,
         audit_sink: AuditSink | None = None,
         max_tasks: int = 256,
+        max_candidates: int = 256,
         lease_seconds: int = 60,
     ):
         if not callable(candidate_resolver):
@@ -65,6 +67,8 @@ class Coordinator:
             raise TypeError("dispatch_adapter must implement dispatch(request, candidate, dispatch_ref)")
         if not isinstance(max_tasks, int) or isinstance(max_tasks, bool) or not 1 <= max_tasks <= 10000:
             raise ValueError("max_tasks must be an integer in [1, 10000]")
+        if not isinstance(max_candidates, int) or isinstance(max_candidates, bool) or not 1 <= max_candidates <= 4096:
+            raise ValueError("max_candidates must be an integer in [1, 4096]")
         if not isinstance(lease_seconds, int) or isinstance(lease_seconds, bool) or not 1 <= lease_seconds <= 3600:
             raise ValueError("lease_seconds must be an integer in [1, 3600]")
         self.candidate_resolver = candidate_resolver
@@ -72,6 +76,7 @@ class Coordinator:
         self.policy_check = policy_check
         self.audit_sink = audit_sink
         self.max_tasks = max_tasks
+        self.max_candidates = max_candidates
         self.lease_seconds = lease_seconds
         self._tasks: dict[str, _TaskRecord] = {}
         self._idempotency: dict[str, str] = {}
@@ -89,13 +94,22 @@ class Coordinator:
             payload.update(extra)
             self.audit_sink(payload)
 
+    @staticmethod
+    def _timestamp(now: float | None) -> float:
+        value = time.time() if now is None else now
+        if isinstance(value, bool) or not isinstance(value, (int, float)) or not math.isfinite(value):
+            raise ValidationError("timestamp must be a finite number")
+        return float(value)
+
     def _candidates(self, capability_id: str) -> tuple[AgentCandidate, ...]:
         try:
-            discovered = self.candidate_resolver(capability_id)
+            discovered = iter(self.candidate_resolver(capability_id))
         except Exception as exc:
             raise CoordinationError("candidate discovery failed") from exc
         unique: dict[str, AgentCandidate] = {}
-        for candidate in discovered:
+        for index, candidate in enumerate(discovered):
+            if index >= self.max_candidates:
+                raise CoordinationError("candidate discovery exceeded configured limit")
             if not isinstance(candidate, AgentCandidate):
                 continue
             try:
@@ -116,7 +130,7 @@ class Coordinator:
             raise PermissionError("policy evaluation failed; task submission denied") from exc
         if allowed is not True:
             raise PermissionError("policy denied task submission")
-        timestamp = time.time() if now is None else float(now)
+        timestamp = self._timestamp(now)
 
         with self._lock:
             existing_id = self._idempotency.get(request.idempotency_key)

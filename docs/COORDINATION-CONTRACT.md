@@ -12,7 +12,7 @@ An identical idempotency key and identical request returns the original task rec
 
 ## Candidate selection
 
-The injected resolver returns candidate agent descriptors. The coordinator validates identifiers, filters to the exact requested capability, removes duplicate agent identifiers and sorts deterministically by agent identifier. Discovery and capability claims are advisory until authenticated and independently verified.
+The injected resolver returns candidate agent descriptors. Candidate enumeration is bounded to 256 entries by default; exceeding the configured limit rejects discovery. The coordinator validates identifiers, filters to the exact requested capability, removes duplicate agent identifiers and sorts deterministically by agent identifier. Discovery and capability claims are advisory until authenticated and independently verified.
 
 ## Lifecycle
 
@@ -20,7 +20,7 @@ The injected resolver returns candidate agent descriptors. The coordinator valid
 
 Failure or lease expiry transitions the task to another bounded attempt, or to `failed` when the attempt budget is exhausted. Each attempt has a unique deterministic dispatch reference derived from task ID and attempt number. Acknowledgement and completion must match the active dispatch reference and selected agent.
 
-A lease is a recovery deadline, not proof of remote termination. Retrying after expiry may overlap an old worker if the transport/executor cannot fence it. Production adapters must implement fencing or idempotent side-effect semantics.
+Lifecycle timestamps supplied to the coordinator must be finite numeric values; boolean and non-finite timestamps are rejected. A lease is a recovery deadline, not proof of remote termination. Retrying after expiry may overlap an old worker if the transport/executor cannot fence it. Production adapters must implement fencing or idempotent side-effect semantics.
 
 ## Policy and audit
 

@@ -62,6 +62,18 @@ class CoordinatorTests(unittest.TestCase):
                 max_candidates=0,
             )
 
+
+    def test_dispatch_audit_failure_fails_closed_without_retry(self):
+        adapter = FakeDispatch()
+        def audit(event):
+            if event["event"] == "task.dispatching":
+                raise RuntimeError("audit unavailable")
+        coordinator = make_coordinator(adapter, audit_sink=audit)
+        with self.assertRaises(CoordinationError):
+            coordinator.submit(request(), now=100)
+        self.assertEqual(adapter.calls, [])
+        self.assertEqual(coordinator.get("task.one").state, TaskState.FAILED)
+
     def test_two_agent_delegation_acknowledgement_and_completion(self):
         adapter = FakeDispatch()
         coordinator = make_coordinator(adapter)

@@ -1,9 +1,29 @@
-# Repository 17 staging status
+# Repository 17 deployment and audit status
 
-Experimental single-process coordination scaffold deployed to the public repository. All 18 files match the master staging packet. CI passed on Python 3.10, 3.11 and 3.12 (17 tests): https://github.com/PCakes303/swarm-coordination/actions/runs/41417719239. Master control-plane validation passed: https://github.com/PCakes303/agent-intelligence-ecosystem/actions/runs/41416825323. This validates the master registry and staging control plane; the repository-local Python test matrix runs after deployment. Includes validated task declarations, deterministic candidate selection, policy-gated idempotent submission, dispatch and acknowledgement binding, bounded retry attempts, lease-expiry recovery (including stale acknowledgement rejection), completion/failure transitions, optional audit events, AIX mapping guidance, JSON Schema, tests and Python 3.10–3.12 CI.
+**Repository:** [PCakes303/swarm-coordination](https://github.com/PCakes303/swarm-coordination)  
+**Audited baseline:** `d7020cf3279bb2f9de7d0c4701eae742ed6c9c3f`  
+**Baseline CI:** [Run 41417899230](https://github.com/PCakes303/swarm-coordination/actions/runs/41417899230) — success on Python 3.10, 3.11 and 3.12  
+**Staging source:** `provisioning/staged/swarm-coordination/` in the master repository.
 
-The initial vertical slice is a coordinator library with injected candidate resolver and dispatch adapter. It is not a network service, distributed scheduler or consensus protocol. State and idempotency records are in-memory and volatile. No cryptographic caller authentication, durable state, cross-replica replay protection, distributed locking, federation, consensus, production AIX codec integration or production adapters are implemented.
+## Current deployment record
 
-Dependencies on Swarm Runtime, AIX Core, Agent Discovery Network and Agent Capability Registry remain `declared`, not `tested`.
+The public remote exists and is authoritative for current implementation. The historical 18-file staging parity and CI records are provenance only; refresh path/blob-SHA parity against current `main` before portfolio sign-off.
 
-Next: deploy and test the scaffold; then build authenticated transport integration, durable task state, cross-repository AIX/discovery/capability fixtures and multi-node recovery tests.
+## Remediation in progress
+
+Candidate resolver enumeration is now bounded (256 by default) and rejects overflow instead of consuming unbounded iterables. All lifecycle timestamps reject booleans and non-finite values. Added tests for candidate bounds, invalid configuration and timestamp validation.
+
+## Remaining verification
+
+- Integrate authenticated requester/agent identities and cryptographically authenticated dispatch/acknowledgement messages.
+- Connect the policy callback to the real versioned Policy Engine and enforce decisions at protected resource boundaries.
+- Integrate authenticated durable audit provenance.
+- Implement durable shared idempotency/lease state, cross-replica replay protection, fencing tokens and recovery semantics before distributed operation.
+- Integrate pinned AIX Core/Codecs, Discovery Network and Capability Registry contracts with reproducible cross-repository fixtures.
+- Verify GitHub private vulnerability reporting/security advisory configuration; SECURITY.md records that no dedicated private reporting address is published.
+- Apply and verify GitHub About homepage/topics (description exists); verify branch rulesets/protection, Actions permissions, secret scanning, push protection and dependency alerts.
+- Refresh staging-to-remote path/blob-SHA parity and retain pending license status until an explicit repository/artifact decision is approved.
+
+## Maturity and limitations
+
+This remains a single-process, in-memory coordinator. It does not authenticate requesters or agents, verify signatures, provide cross-replica replay protection, implement distributed consensus, guarantee exactly-once delivery/execution, or implement production AIX/transport adapters. Lease expiry does not terminate old workers; production adapters need fencing or idempotent side effects.

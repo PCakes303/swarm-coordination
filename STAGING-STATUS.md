@@ -11,7 +11,7 @@ The public remote exists and is authoritative for current implementation. The hi
 
 ## Remediation in progress
 
-Candidate resolver enumeration is now bounded (256 by default) and rejects overflow instead of consuming unbounded iterables. All lifecycle timestamps reject booleans and non-finite values. Added tests for candidate bounds, invalid configuration and timestamp validation.
+Candidate resolver enumeration is now bounded (256 by default) and rejects overflow instead of consuming unbounded iterables. All lifecycle timestamps reject booleans and non-finite values. Dispatching audit failure now marks the task failed and prevents dispatch/retry; it is no longer misclassified as an adapter failure. Added tests for candidate bounds, invalid configuration, timestamp validation and dispatch-audit failure.
 
 ## Remaining verification
 

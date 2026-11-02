@@ -1,0 +1,59 @@
+{
+  "capabilities_version": "1.1.0",
+  "repository": "swarm-coordination",
+  "repository_id": "swarm-coordination",
+  "maturity": "scaffolding",
+  "capabilities": [
+    {
+      "id": "swarm.task-delegation",
+      "name": "Agent task delegation",
+      "status": "scaffolded",
+      "description": "Assigns validated task requests to policy-approved candidates through an injected dispatch adapter.",
+      "evidence": [
+        "swarm_coordination/coordinator.py",
+        "tests/test_coordinator.py"
+      ]
+    },
+    {
+      "id": "swarm.task-idempotency",
+      "name": "Task submission idempotency",
+      "status": "scaffolded",
+      "description": "Returns the existing task for an identical idempotency key and rejects conflicting key reuse within the process lifetime.",
+      "evidence": [
+        "swarm_coordination/coordinator.py",
+        "tests/test_coordinator.py"
+      ]
+    },
+    {
+      "id": "swarm.task-acknowledgement",
+      "name": "Dispatch acknowledgement binding",
+      "status": "scaffolded",
+      "description": "Binds acknowledgements and completion to the exact dispatch reference and selected agent.",
+      "evidence": [
+        "swarm_coordination/coordinator.py",
+        "tests/test_coordinator.py"
+      ]
+    },
+    {
+      "id": "swarm.task-recovery",
+      "name": "Bounded retry and lease recovery",
+      "status": "scaffolded",
+      "description": "Retries dispatch or failed/expired attempts within explicit attempt and lease bounds.",
+      "evidence": [
+        "swarm_coordination/coordinator.py",
+        "tests/test_coordinator.py"
+      ]
+    }
+  ],
+  "explicit_non_capabilities": [
+    "authenticated network transport",
+    "cryptographic acknowledgement verification",
+    "durable task or idempotency storage",
+    "cross-replica replay protection",
+    "distributed locking or consensus",
+    "federated scheduling",
+    "production AIX codec or adapter integration",
+    "proof of candidate identity, health or capability implementation",
+    "workload execution"
+  ]
+}

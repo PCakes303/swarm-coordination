@@ -59,4 +59,4 @@ AIX remains an extension layer. An external adapter can map requests to the AIX 
 
 This implementation is single-process and in-memory. Restart loses task and idempotency state. It does not authenticate requesters or agents, verify signatures, provide cross-replica replay protection, implement distributed consensus, or guarantee exactly-once delivery/execution. Lease expiry does not terminate an old worker; production adapters need fencing or idempotent side effects.
 
-See [coordination contract](docs/COORDINATION-CONTRACT.md) and [threat model](docs/THREAT-MODEL.md). Python 3.10–3.12 are covered by CI. No release is published and the scoped mixed-license policy is documented in [LICENSE.md](LICENSE.md).
+See [coordination contract](docs/COORDINATION-CONTRACT.md) and [threat model](docs/THREAT-MODEL.md). Python 3.10–3.12 are covered by CI. No release is published. The policy in [LICENSE.md](LICENSE.md) documents the intended mixed-license scope, but this repository's manifest license status remains `pending-review` until contributor authority, file-level provenance and third-party notices are checked.
